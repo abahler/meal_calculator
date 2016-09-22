@@ -28,8 +28,7 @@ function Diner(name) {
 	this.tipAmount = 0;
 
 	/**
-	* Total the price of the menu items the diner ordered.
-	* @return void
+	* Total the price of the menu items the diner ordered (not including tax or tip).
 	*/
 	this.calculateSubTotal = function() {	
 		if (Object.keys(this.items).length) {
@@ -41,7 +40,6 @@ function Diner(name) {
 
 	/**
 	* Calculate the tax on the bill.
-	* @return	mixed	tax 	Either the tax amount, or false to indicate not tip 
 	*/
 	this.calculateTax = function() {
 		if (this.subTotal) {
@@ -51,7 +49,6 @@ function Diner(name) {
 
 	/**
 	* Calculate the tip on the bill.
-	* @return 	mixed 	tip 	Either the tip amount, or false to indicate no tip
 	*/
 	this.calculateTip = function() {
 		if (this.subTotal) {
@@ -65,18 +62,16 @@ function Diner(name) {
 // 'diners' is an array of Diner object instances.
 function Bill(diners) {
 
-	this.diners = diners;
-	
 	// Checking upfront for at least one diner, so the following methods don't each have to do it
 	if (!diners.length) {
 		throw new NoDinerException("You must have at least one diner on the bill.");
 	}
 
+	this.diners = diners;
 	this.grandTotal = 0;
 
 	/**
 	* Print each diner's total + tax (not including tip)
-	* @return void
 	*/
 	this.printDinerTotals = function() {
 		for (d in diners) {
@@ -89,7 +84,6 @@ function Bill(diners) {
 
 	/**
 	* Print the tip of each diner at the table
-	* @return void
 	*/
 	this.printTips = function() {
 		for (d in diners) {
@@ -101,7 +95,6 @@ function Bill(diners) {
 
 	/**
 	* Print a breakdown for each diner including their name, total, tax and tip
-	* @return void
 	*/
 	this.printDinerBreakdown = function() {
 		for (d in diners) {
