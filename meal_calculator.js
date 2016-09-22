@@ -57,11 +57,9 @@ function Diner(name) {
 // Bill object to represent one table's bill.
 // 'diners' is an array of Diner object instances.
 function Bill(diners) {
-
-	// May not need any properties/attributes, as these are all printer methods (not storing anything)
 	
 	if (!diners) {
-		throw new noDinerException('There must be at least one diner on the bill.');
+		throw new NoDinerException('There must be at least one diner on the bill.');
 	}
 
 	/**
