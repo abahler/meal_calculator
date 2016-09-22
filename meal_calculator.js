@@ -38,8 +38,7 @@ function Diner(name) {
 				this.subTotal += this.items[i];	
 			}			
 		}
-
-	}
+	};
 
 	/**
 	* Calculate the tax on the bill.
@@ -49,7 +48,7 @@ function Diner(name) {
 		if (this.subTotal) {
 			this.taxAmount = subTotal * _taxRate;
 		}
-	}
+	};
 
 	/**
 	* Calculate the tip on the bill.
@@ -59,7 +58,7 @@ function Diner(name) {
 		if (this.subTotal) {
 			this.tipAmount = subTotal * _tipRate;
 		}
-	}
+	};
 
 }
 
@@ -99,7 +98,7 @@ function Bill(diners) {
 
 			console.log(d.name + ' is paying a tip of $' + d.tipAmount + '.');
 		}
-	}
+	};
 
 	/**
 	* Print a breakdown for each diner including their name, total, tax and tip
@@ -113,13 +112,13 @@ function Bill(diners) {
 
 			console.log(breakdown);
 		}
-	}
+	};
 
 	this.calculateGrandTotal = function() {
 		for (d in diners) {
 			this.grandTotal += (d.subTotal + d.taxAmount + d.tipAmount);
 		}
-	}
+	};
 
 }
 
