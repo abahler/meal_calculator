@@ -9,7 +9,13 @@
 /*** OBJECTS ***/
 
 // Diner object to represent one person at a table.
+// `name` is a string with the Diner's name
+// `items` is an object containing menu items ordered (key) and their prices (value) 
 function Diner(name) {
+
+	if (!name) {
+		throw new NoNameException('Surely this person at the table has a name!');
+	}
 
 	// Private vars
 	var _taxRate = 0.67;
@@ -17,7 +23,7 @@ function Diner(name) {
 
 	// Public vars
 	this.name = name;
-	this.items = {};	// Will be populated in procedural code
+	this.items = {};	// Will be populated in procedural code (as diners don't come to a restaurant with items in hand)
 	this.subTotal = 0;	
 	this.taxAmount = 0;	
 	this.tipAmount = 0;
@@ -58,8 +64,8 @@ function Diner(name) {
 // 'diners' is an array of Diner object instances.
 function Bill(diners) {
 	
-	if (!diners) {
-		throw new NoDinerException('There must be at least one diner on the bill.');
+	if (!diners.length) {
+		throw new NoDinerException("You must have at least one diner on the bill.");
 	}
 
 	/**
@@ -93,7 +99,7 @@ function Bill(diners) {
 	*/
 	function printDinerBreakdown() {
 		for (d in diners) {
-			var breakdown = d.name + 'of $' + d.subTotal + ', ';
+			var breakdown = d.name + ' has a subtotal of $' + d.subTotal + ', ';
 			breakdown += ' a tax amount of $' + d.taxAmount + ', ';
 			breakdown += ' and a tip amount of $' + d.tipAmount + '.';
 
@@ -103,6 +109,11 @@ function Bill(diners) {
 
 }
 
+// Custom exception to handle the case where a Diner doesn't have a name
+function NoNameException(message) {
+	this.message = message;
+}
+
 // Custom exception to handle the case where a Bill is instantiated with no Diners
 function NoDinerException(message) {
 	this.message = message;
@@ -110,7 +121,7 @@ function NoDinerException(message) {
 
 /*** PROCEDURAL CODE ***/
 
-console.log("hello world");
+console.log("Starting up the meal calculator. Let's see what the damage is.");
 
 // From the spec:
 // Need dummy data that creates 1 bill, 3 diners that are on the same bill, and 2 dishes for each diner
@@ -124,6 +135,8 @@ console.log("hello world");
 // TODO: Print the total tip for the waitress
 
 // TODO: Print a breakdown for each person
+
+console.log("And that's the bill for everyone. Have a nice day!");
 
 
 
