@@ -9,7 +9,7 @@
 /*** OBJECTS ***/
 
 // Diner object to represent one person at a table.
-// `name` is a string with the Diner's name
+// `name` is a string with the Diner's name.
 function Diner(name) {
 
 	if (!name) {
@@ -17,42 +17,44 @@ function Diner(name) {
 	}
 
 	// Private vars
-	var _taxRate = 0.67;
+	var _taxRate = 0.067;
 	var _tipRate = 0.20; 	
 
 	// Public vars
 	this.name = name;
 	this.items = {};	// Will be populated in procedural code (as diners don't come to a restaurant with items in hand)
-	this.subTotal = 0;	
-	this.taxAmount = 0;	
-	this.tipAmount = 0;
+	// this.subTotal = 0;	
+	// this.taxAmount = 0;	
+	// this.tipAmount = 0;	
 
 	/**
 	* Total the price of the menu items the diner ordered (not including tax or tip).
 	*/
-	this.calculateSubTotal = function() {	
+	this.getSubTotal = function() {	
 		if (Object.keys(this.items).length) {
+			var subTotal = 0;
 			for (i in this.items) {
-				this.subTotal += this.items[i];	
-			}			
+				subTotal += this.items[i];	
+			}	
+			return subTotal;		
 		}
 	};
 
 	/**
 	* Calculate the tax on the bill.
 	*/
-	this.calculateTax = function() {
-		if (this.subTotal) {
-			this.taxAmount = this.subTotal * _taxRate;
+	this.getTax = function(subTotal) {
+		if (subTotal) {
+			return (subTotal * _taxRate);
 		}
 	};
 
 	/**
 	* Calculate the tip on the bill.
 	*/
-	this.calculateTip = function() {
-		if (this.subTotal) {
-			this.tipAmount = this.subTotal * _tipRate;
+	this.getTip = function(subTotal) {
+		if (subTotal) {
+			return (subTotal * _tipRate);
 		}
 	};
 
@@ -67,48 +69,70 @@ function Bill(diners) {
 		throw new NoDinerException("You must have at least one diner on the bill.");
 	}
 
-	this.diners = diners;
-	this.grandTotal = 0;
+	this.diners = diners;	
+	// this.grandTotal = 0;	// May not need this property
 
 	/**
-	* Print each diner's total + tax (not including tip)
+	* Compute each diner's total, including tax (but not tip)
 	*/
-	this.printDinerTotals = function() {
+	this.getDinerTotals = function() {
 		for (d in diners) {
-			d.calculateSubTotal();
-			d.calculateTax();
+			var subTotal = d.getSubTotal();	// Modifies subtotal in-place
+			var taxAmount = d.getTax();				// Same with tax amount
 
-			console.log('Not including tip, the total for ' + d.name + ' is $' + (d.subTotal + d.taxAmount) + '.');
+			console.log('Not including tip, the total for ' + d.name + ' is $' + (subTotal + taxAmount) + '.');
 		}
 	};
 
 	/**
-	* Print the tip of each diner at the table
+	* Compute the tip of each diner at the table
 	*/
 	this.printTips = function() {
+		var tipTotal = 0;
 		for (d in diners) {
-			d.calculateTip();
-
-			console.log(d.name + ' is paying a tip of $' + d.tipAmount + '.');
+			tipTotal += d.getTip();	// Modifies tip amount in-place
 		}
+		console.log('The total tip on the bill is ' + tipTotal + '.');
 	};
 
 	/**
-	* Print a breakdown for each diner including their name, total, tax and tip
+	* Compute a breakdown for each diner including their name, total, tax and tip
 	*/
 	this.printDinerBreakdown = function() {
 		for (d in diners) {
-			var breakdown = d.name + ' has a subtotal of $' + d.subTotal + ', ';
-			breakdown += ' a tax amount of $' + d.taxAmount + ', ';
-			breakdown += ' and a tip amount of $' + d.tipAmount + '.';
+
+			var subTotal = d.getSubTotal();
+			var taxAmount = d.getTax();
+			var tipAmount = d.getTip();
+
+			var breakdown = d.name + ' has a subtotal of $' + subTotal + ', ';
+			breakdown += ' a tax amount of $' + taxAmount + ', ';
+			breakdown += ' and a tip amount of $' + tipAmount + '.';
 
 			console.log(breakdown);
 		}
 	};
 
-	this.calculateGrandTotal = function() {
+	/**
+	* Compute grand total for the bill (subtotal, tax and tip for each dinner)
+	*/
+	this.getGrandTotal = function() {
 		for (d in diners) {
-			this.grandTotal += (d.subTotal + d.taxAmount + d.tipAmount);
+			// Let coercion work in our favor, in case some joker set a property to an empty string
+			if (d.subTotal == 0) {
+				d.getSubTotal();
+			}
+
+			if (d.taxAmount == 0) {
+				d.getTax();
+			}
+
+			if (d.tipAmount == 0) {
+				d.getTip();
+			}
+
+			var grandTotal = '';
+			console.log(grandTotal);
 		}
 	};
 
@@ -136,9 +160,9 @@ elizabeth.items = {'pork tacos': 9, 'soft drink' : 1.5};
 adam.items = {'enchiladas': 10, 'iced tea': 2};
 jennifer.items = {'fajitas': 13, 'coffee': 4};
 
-// console.log(elizabeth);
-// console.log(adam);
-// console.log(jennifer);
+console.log(elizabeth);
+console.log(adam);
+console.log(jennifer);
 
 var diners = [elizabeth, adam, jennifer];
 
@@ -146,30 +170,6 @@ var bill = new Bill(diners);
 
 console.log("Starting up the meal calculator. Let's see what the damage is.");
 
-for (var i = 0; i < diners.length; i++) {
-	var d = diners[i];
-	d.calculateSubTotal();
-	d.calculateTip();
-	d.calculateTax();
-}
 
-// Calculate and print grand total for bill
-bill.calculateGrandTotal();
-console.log('The total for the bill is $' + bill.grandTotal + '.');
-
-/*
-
-// Print the total tip for the server
-elizabeth.calculateTip();
-adam.calculateTip();
-jennifer.calculateTip();
-console.log('The total tip is ' + (elizabeth.tipAmount + adam.tipAmount + jennifer.tipAmount) + '.');
-
-// TODO: Print a breakdown for each person
-console.log("Let's break down what everyone owes: ");
-bill.printDinerBreakdown();
-
-console.log("And that's the bill for everyone. Have a nice day!");
-*/
 
 
