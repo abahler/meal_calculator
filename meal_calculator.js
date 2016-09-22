@@ -45,7 +45,7 @@ function Diner(name) {
 	*/
 	this.calculateTax = function() {
 		if (this.subTotal) {
-			this.taxAmount = subTotal * _taxRate;
+			this.taxAmount = this.subTotal * _taxRate;
 		}
 	};
 
@@ -55,7 +55,7 @@ function Diner(name) {
 	*/
 	this.calculateTip = function() {
 		if (this.subTotal) {
-			this.tipAmount = subTotal * _tipRate;
+			this.tipAmount = this.subTotal * _tipRate;
 		}
 	};
 
