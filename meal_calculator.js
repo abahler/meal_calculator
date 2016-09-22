@@ -32,17 +32,20 @@ function Diner(name) {
 	* Total the price of the menu items the diner ordered.
 	* @return void
 	*/
-	function calculateSubTotal() {
-		for (i in items) {
-			this.subTotal += this.items[i];	
+	this.calculateSubTotal = function() {	
+		if (Object.keys(items).length) {
+			for (i in this.items) {
+				this.subTotal += this.items[i];	
+			}			
 		}
+
 	}
 
 	/**
 	* Calculate the tax on the bill.
 	* @return	mixed	tax 	Either the tax amount, or false to indicate not tip 
 	*/
-	function calculateTax() {
+	this.calculateTax = function() {
 		if (this.subTotal) {
 			this.taxAmount = subTotal * _taxRate;
 		}
@@ -52,7 +55,7 @@ function Diner(name) {
 	* Calculate the tip on the bill.
 	* @return 	mixed 	tip 	Either the tip amount, or false to indicate no tip
 	*/
-	function calculateTip() {
+	this.calculateTip = function() {
 		if (this.subTotal) {
 			this.tipAmount = subTotal * _tipRate;
 		}
@@ -63,33 +66,38 @@ function Diner(name) {
 // Bill object to represent one table's bill.
 // 'diners' is an array of Diner object instances.
 function Bill(diners) {
+
+	this.diners = diners;
 	
+	// Checking upfront for at least one diner, so the following methods don't each have to do it
 	if (!diners.length) {
 		throw new NoDinerException("You must have at least one diner on the bill.");
 	}
+
+	this.grandTotal = 0;
 
 	/**
 	* Print each diner's total + tax (not including tip)
 	* @return void
 	*/
-	function printTotal() {
+	this.printDinerTotals = function() {
 		for (d in diners) {
 			d.calculateSubTotal();
 			d.calculateTax();
 
 			console.log('Not including tip, the total for ' + d.name + ' is $' + (d.subTotal + d.taxAmount) + '.');
 		}
-	}
+	};
 
 	/**
 	* Print the tip of each diner at the table
 	* @return void
 	*/
-	function printTips() {
+	this.printTips = function() {
 		for (d in diners) {
-			var tip = d.calculateTip();
+			d.calculateTip();
 
-			console.log(d.name + ' is paying a tip of $' + tip + '.');
+			console.log(d.name + ' is paying a tip of $' + d.tipAmount + '.');
 		}
 	}
 
@@ -97,13 +105,19 @@ function Bill(diners) {
 	* Print a breakdown for each diner including their name, total, tax and tip
 	* @return void
 	*/
-	function printDinerBreakdown() {
+	this.printDinerBreakdown = function() {
 		for (d in diners) {
 			var breakdown = d.name + ' has a subtotal of $' + d.subTotal + ', ';
 			breakdown += ' a tax amount of $' + d.taxAmount + ', ';
 			breakdown += ' and a tip amount of $' + d.tipAmount + '.';
 
 			console.log(breakdown);
+		}
+	}
+
+	this.calculateGrandTotal = function() {
+		for (d in diners) {
+			this.grandTotal += (d.subTotal + d.taxAmount + d.tipAmount);
 		}
 	}
 
@@ -121,23 +135,34 @@ function NoDinerException(message) {
 
 /*** PROCEDURAL CODE ***/
 
+console.log('Welcome to the restaurant!');
+
+var elizabeth = new Diner('Elizabeth');
+var adam = new Diner('Adam');
+var jennifer = new Diner('Jennifer');
+
+elizabeth.items = {'pork tacos': 9, 'soft drink' : 1.5};
+adam.items = {'enchiladas': 10, 'iced tea': 2};
+jennifer.items = {'fajitas': 13, 'coffee': 4};
+
+var bill = new Bill([elizabeth, adam, jennifer]);
+
 console.log("Starting up the meal calculator. Let's see what the damage is.");
 
-// From the spec:
-// Need dummy data that creates 1 bill, 3 diners that are on the same bill, and 2 dishes for each diner
+// Calculate and print total for bill
+bill.calculateGrandTotal();
+console.log('The total for the bill is $' + bill.grandTotal + '.');
 
-// TODO: create three diners with two dishes each
-
-// TODO: create a bill, passing in an array of the three diners
-
-// TODO: Print the total for the bill
-
-// TODO: Print the total tip for the waitress
+// Print the total tip for the server
+elizabeth.calculateTip();
+adam.calculateTip();
+jennifer.calculateTip();
+console.log('The total tip is ' + (elizabeth.tipAmount + adam.tipAmount + jennifer.tipAmount) + '.');
 
 // TODO: Print a breakdown for each person
+console.log("Let's break down what everyone owes: ");
+bill.printDinerBreakdown();
 
 console.log("And that's the bill for everyone. Have a nice day!");
-
-
 
 
