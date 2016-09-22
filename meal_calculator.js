@@ -10,7 +10,6 @@
 
 // Diner object to represent one person at a table.
 // `name` is a string with the Diner's name
-// `items` is an object containing menu items ordered (key) and their prices (value) 
 function Diner(name) {
 
 	if (!name) {
@@ -33,7 +32,7 @@ function Diner(name) {
 	* @return void
 	*/
 	this.calculateSubTotal = function() {	
-		if (Object.keys(items).length) {
+		if (Object.keys(this.items).length) {
 			for (i in this.items) {
 				this.subTotal += this.items[i];	
 			}			
@@ -144,13 +143,28 @@ elizabeth.items = {'pork tacos': 9, 'soft drink' : 1.5};
 adam.items = {'enchiladas': 10, 'iced tea': 2};
 jennifer.items = {'fajitas': 13, 'coffee': 4};
 
-var bill = new Bill([elizabeth, adam, jennifer]);
+// console.log(elizabeth);
+// console.log(adam);
+// console.log(jennifer);
+
+var diners = [elizabeth, adam, jennifer];
+
+var bill = new Bill(diners);
 
 console.log("Starting up the meal calculator. Let's see what the damage is.");
 
-// Calculate and print total for bill
+for (var i = 0; i < diners.length; i++) {
+	var d = diners[i];
+	d.calculateSubTotal();
+	d.calculateTip();
+	d.calculateTax();
+}
+
+// Calculate and print grand total for bill
 bill.calculateGrandTotal();
 console.log('The total for the bill is $' + bill.grandTotal + '.');
+
+/*
 
 // Print the total tip for the server
 elizabeth.calculateTip();
@@ -163,5 +177,6 @@ console.log("Let's break down what everyone owes: ");
 bill.printDinerBreakdown();
 
 console.log("And that's the bill for everyone. Have a nice day!");
+*/
 
 
