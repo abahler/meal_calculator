@@ -23,9 +23,6 @@ function Diner(name) {
 	// Public vars
 	this.name = name;
 	this.items = {};	// Will be populated in procedural code (as diners don't come to a restaurant with items in hand)
-	// this.subTotal = 0;	
-	// this.taxAmount = 0;	
-	// this.tipAmount = 0;	
 
 	/**
 	* Total the price of the menu items the diner ordered (not including tax or tip).
@@ -36,7 +33,7 @@ function Diner(name) {
 			for (i in this.items) {
 				subTotal += this.items[i];	
 			}	
-			return subTotal;		
+			return parseFloat(subTotal);		
 		}
 	};
 
@@ -45,7 +42,7 @@ function Diner(name) {
 	*/
 	this.getTax = function(subTotal) {
 		if (subTotal) {
-			return (subTotal * _taxRate);
+			return parseFloat(subTotal * _taxRate);
 		}
 	};
 
@@ -54,7 +51,9 @@ function Diner(name) {
 	*/
 	this.getTip = function(subTotal) {
 		if (subTotal) {
-			return (subTotal * _tipRate);
+			var rawTip = subTotal * _tipRate;
+			var formattedTip = rawTip.toFixed(2);
+			return parseFloat(formattedTip);
 		}
 	};
 
@@ -69,18 +68,17 @@ function Bill(diners) {
 		throw new NoDinerException("You must have at least one diner on the bill.");
 	}
 
-	this.diners = diners;	
-	// this.grandTotal = 0;	// May not need this property
-
 	/**
 	* Compute each diner's total, including tax (but not tip)
 	*/
-	this.getDinerTotals = function() {
+	this.printDinerTotals = function() {
 		for (d in diners) {
-			var subTotal = d.getSubTotal();	// Modifies subtotal in-place
-			var taxAmount = d.getTax();				// Same with tax amount
+			var diner = diners[d];
 
-			console.log('Not including tip, the total for ' + d.name + ' is $' + (subTotal + taxAmount) + '.');
+			var subTotal = diner.getSubTotal();	// Modifies subtotal in-place
+			var taxAmount = diner.getTax();				// Same with tax amount
+
+			console.log('Not including tip, the total for ' + diner.name + ' is $' + (subTotal + taxAmount) + '.');
 		}
 	};
 
@@ -90,7 +88,8 @@ function Bill(diners) {
 	this.printTips = function() {
 		var tipTotal = 0;
 		for (d in diners) {
-			tipTotal += d.getTip();	// Modifies tip amount in-place
+			var diner = diners[d];
+			tipTotal += diner.getTip();	// Modifies tip amount in-place
 		}
 		console.log('The total tip on the bill is ' + tipTotal + '.');
 	};
@@ -100,12 +99,13 @@ function Bill(diners) {
 	*/
 	this.printDinerBreakdown = function() {
 		for (d in diners) {
+			var diner = diners[d];
 
-			var subTotal = d.getSubTotal();
-			var taxAmount = d.getTax();
-			var tipAmount = d.getTip();
+			var subTotal = diner.getSubTotal();
+			var taxAmount = diner.getTax();
+			var tipAmount = diner.getTip();
 
-			var breakdown = d.name + ' has a subtotal of $' + subTotal + ', ';
+			var breakdown = diner.name + ' has a subtotal of $' + subTotal + ', ';
 			breakdown += ' a tax amount of $' + taxAmount + ', ';
 			breakdown += ' and a tip amount of $' + tipAmount + '.';
 
@@ -118,17 +118,18 @@ function Bill(diners) {
 	*/
 	this.getGrandTotal = function() {
 		for (d in diners) {
+			var diner = diners[d];
 			// Let coercion work in our favor, in case some joker set a property to an empty string
-			if (d.subTotal == 0) {
-				d.getSubTotal();
+			if (diner.subTotal == 0) {
+				diner.getSubTotal();
 			}
 
-			if (d.taxAmount == 0) {
-				d.getTax();
+			if (diner.taxAmount == 0) {
+				diner.getTax();
 			}
 
-			if (d.tipAmount == 0) {
-				d.getTip();
+			if (diner.tipAmount == 0) {
+				diner.getTip();
 			}
 
 			var grandTotal = '';
@@ -160,15 +161,48 @@ elizabeth.items = {'pork tacos': 9, 'soft drink' : 1.5};
 adam.items = {'enchiladas': 10, 'iced tea': 2};
 jennifer.items = {'fajitas': 13, 'coffee': 4};
 
-console.log(elizabeth);
-console.log(adam);
-console.log(jennifer);
-
 var diners = [elizabeth, adam, jennifer];
 
 var bill = new Bill(diners);
 
 console.log("Starting up the meal calculator. Let's see what the damage is.");
+
+// Calculate bill grand total, and total tip for server
+var grandTotal = 0;
+var totalTip = 0;
+// BUG: loop is somehow not cycling through correctly.
+for (var counter = 0; counter < diners.length; counter++) {
+	var diner = diners[counter];
+	// CONFIRMED: we do cycle through the diner array correctly, so it's not stopping at the first element (elizabeth)
+	// console.log('Printing diner number ' + (i+1) + ':');
+	// console.log(diner);
+
+	var dinerSubTotal = diner.getSubTotal();
+	var dinerTax = diner.getTax(dinerSubTotal);
+	var dinerTip = diner.getTip(dinerSubTotal);
+	console.log('Subtotal: ' + dinerSubTotal);
+	console.log('Tax: ' + dinerTax);
+	console.log('Tip: ' + dinerTip);
+	
+	grandTotal += (dinerSubTotal + dinerTax + dinerTip);
+
+	totalTip += dinerTip;
+}
+granTotal = grandTotal.toFixed(2);
+console.log('Grand total: ' + grandTotal);
+console.log('Total tip: ' + totalTip);
+
+/*
+console.log('The server is getting a total tip of ' + totalTip + '.');
+
+console.log('Showing breakdown for each diner...');
+bill.printDinerBreakdown();		// Loop is done within method, no need to iterate through array
+
+console.log('And the grand total for the bill is: ' + grandTotal + '.');
+*/
+
+console.log("Thanks for coming in. Have a nice day!");
+
 
 
 
