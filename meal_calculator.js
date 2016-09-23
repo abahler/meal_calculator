@@ -42,7 +42,9 @@ function Diner(name) {
 	*/
 	this.getTax = function(subTotal) {
 		if (subTotal) {
-			return parseFloat(subTotal * _taxRate);
+			var rawTax = subTotal * _taxRate;
+			var formattedTax = rawTax.toFixed(2);
+			return parseFloat(formattedTax);
 		}
 	};
 
@@ -196,8 +198,3 @@ bill.printDinerBreakdown();		// Loop is done within method, no need to iterate t
 console.log('And the grand total for the bill is: ' + grandTotal + '.');
 
 console.log("Thanks for coming in. Have a nice day!");
-
-
-
-
-
