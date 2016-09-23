@@ -102,8 +102,8 @@ function Bill(diners) {
 			var diner = diners[d];
 
 			var subTotal = diner.getSubTotal();
-			var taxAmount = diner.getTax();
-			var tipAmount = diner.getTip();
+			var taxAmount = diner.getTax(subTotal);
+			var tipAmount = diner.getTip(subTotal);
 
 			var breakdown = diner.name + ' has a subtotal of $' + subTotal + ', ';
 			breakdown += ' a tax amount of $' + taxAmount + ', ';
@@ -170,12 +170,8 @@ console.log("Starting up the meal calculator. Let's see what the damage is.");
 // Calculate bill grand total, and total tip for server
 var grandTotal = 0;
 var totalTip = 0;
-// BUG: loop is somehow not cycling through correctly.
 for (var counter = 0; counter < diners.length; counter++) {
 	var diner = diners[counter];
-	// CONFIRMED: we do cycle through the diner array correctly, so it's not stopping at the first element (elizabeth)
-	// console.log('Printing diner number ' + (i+1) + ':');
-	// console.log(diner);
 
 	var dinerSubTotal = diner.getSubTotal();
 	var dinerTax = diner.getTax(dinerSubTotal);
@@ -188,18 +184,16 @@ for (var counter = 0; counter < diners.length; counter++) {
 
 	totalTip += dinerTip;
 }
-granTotal = grandTotal.toFixed(2);
-console.log('Grand total: ' + grandTotal);
-console.log('Total tip: ' + totalTip);
 
-/*
+// Limit to two decimal places
+grandTotal = grandTotal.toFixed(2);
+
 console.log('The server is getting a total tip of ' + totalTip + '.');
 
 console.log('Showing breakdown for each diner...');
 bill.printDinerBreakdown();		// Loop is done within method, no need to iterate through array
 
 console.log('And the grand total for the bill is: ' + grandTotal + '.');
-*/
 
 console.log("Thanks for coming in. Have a nice day!");
 
