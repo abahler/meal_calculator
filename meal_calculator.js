@@ -80,7 +80,6 @@ function Bill(diners) {
 			var subTotal = diner.getSubTotal();	// Modifies subtotal in-place
 			var taxAmount = diner.getTax();				// Same with tax amount
 
-			console.log('Not including tip, the total for ' + diner.name + ' is $' + (subTotal + taxAmount) + '.');
 		}
 	};
 
@@ -93,7 +92,6 @@ function Bill(diners) {
 			var diner = diners[d];
 			tipTotal += diner.getTip();	// Modifies tip amount in-place
 		}
-		console.log('The total tip on the bill is ' + tipTotal + '.');
 	};
 
 	/**
@@ -111,7 +109,6 @@ function Bill(diners) {
 			breakdown += ' a tax amount of $' + taxAmount + ', ';
 			breakdown += ' and a tip amount of $' + tipAmount + '.';
 
-			console.log(breakdown);
 		}
 	};
 
@@ -135,7 +132,6 @@ function Bill(diners) {
 			}
 
 			var grandTotal = '';
-			console.log(grandTotal);
 		}
 	};
 
@@ -153,7 +149,6 @@ function NoDinerException(message) {
 
 /*** PROCEDURAL CODE ***/
 
-console.log('Welcome to the restaurant!');
 
 var elizabeth = new Diner('Elizabeth');
 var adam = new Diner('Adam');
@@ -167,7 +162,6 @@ var diners = [elizabeth, adam, jennifer];
 
 var bill = new Bill(diners);
 
-console.log("Starting up the meal calculator. Let's see what the damage is.");
 
 // Calculate bill grand total, and total tip for server
 var grandTotal = 0;
@@ -178,9 +172,6 @@ for (var counter = 0; counter < diners.length; counter++) {
 	var dinerSubTotal = diner.getSubTotal();
 	var dinerTax = diner.getTax(dinerSubTotal);
 	var dinerTip = diner.getTip(dinerSubTotal);
-	console.log('Subtotal: ' + dinerSubTotal);
-	console.log('Tax: ' + dinerTax);
-	console.log('Tip: ' + dinerTip);
 	
 	grandTotal += (dinerSubTotal + dinerTax + dinerTip);
 
@@ -190,11 +181,5 @@ for (var counter = 0; counter < diners.length; counter++) {
 // Limit to two decimal places
 grandTotal = grandTotal.toFixed(2);
 
-console.log('The server is getting a total tip of ' + totalTip + '.');
-
-console.log('Showing breakdown for each diner...');
 bill.printDinerBreakdown();		// Loop is done within method, no need to iterate through array
 
-console.log('And the grand total for the bill is: ' + grandTotal + '.');
-
-console.log("Thanks for coming in. Have a nice day!");
